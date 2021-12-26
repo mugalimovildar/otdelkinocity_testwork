@@ -36,6 +36,7 @@ class tableOut extends CBitrixComponent
 
             $arFilter = Array(
                 'IBLOCK_CODE' => 'CATALOG_SECTION_DATA',
+                'IBLOCK_ID' => 100,
                 'ACTIVE' => 'Y',
                 '!CODE' => 'page',
                 "PROPERTY_URL_PAGE"=>$arFolder."%"
