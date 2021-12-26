@@ -1,0 +1,1 @@
+<pre><?php print_r($arResult['data']); ?></pre>
