@@ -59,11 +59,14 @@ class tableOut extends CBitrixComponent
                 'PROPERTY_SEO_DESCRIPTION'
             );
 
+            $arGroupBy = false;
+            $arNavStartParams = false;
+
             $iBlockElementList = CIBlockElement::GetList(
                 $arOrder,
                 $arFilter,
-                false,
-                false,
+                $arGroupBy,
+                $arNavStartParams,
                 $arSelect
             );
 
