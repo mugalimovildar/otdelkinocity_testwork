@@ -23,24 +23,38 @@ class tableOut extends CBitrixComponent
 
         $request = Context::getCurrent()->getRequest();
 
+        // По условиям задачи должна быть переменная $arFolder, и если
+        // она у нее есть значение, тогда нужно получить данные из инфоблока.
+        // Для примера возьмем значение этой переменной из GET параметра "arfolder"
+
         if ($request->get('arfolder')) $arFolder = $request->get('arfolder');
+
+        // Инициализация пустого результирующего массива 
 
         $fetchResult = Array();
 
+        // Если переменная $arFolder содержит значение
+
         if (isset($arFolder))
         {
+
+            // Данные о сортировке выборки
 
             $arOrder = Array(
                 'PROPERTY_URL_PAGE' => 'ASC'
             );
 
+            // Данные для фильтрации выборки
+
             $arFilter = Array(
-                'IBLOCK_CODE' => 'CATALOG_SECTION_DATA',
-                'IBLOCK_ID' => 100,
+                'IBLOCK_ID' => 100, // Получать элементы инфоблока с ID = 100
                 'ACTIVE' => 'Y',
-                '!CODE' => 'page',
-                "PROPERTY_URL_PAGE"=>$arFolder."%"
+                '!CODE' => 'page', // Получать только те элементы, у которых поле CODE не равно "page"
+                "PROPERTY_URL_PAGE"=>$arFolder."%" // Получать только те элементы, у которых значение свойства URL_PAGE начинается с $arFolder или ей равно
             );
+
+            // Список получаемых элементов
+            // Прим.: здесь можно указать просто false, но я не понял из условия задачи, нужно получать только указанные в условиях данные, или можно получать все данные
 
             $arSelect = Array(
                 'ID',
@@ -60,8 +74,11 @@ class tableOut extends CBitrixComponent
                 'PROPERTY_SEO_DESCRIPTION'
             );
 
+            // Неиспользуемые параметры в рамках задачи
             $arGroupBy = false;
             $arNavStartParams = false;
+
+            // Выборка элементах инфоблоков в соответствии с описанными выше критериями
 
             $iBlockElementList = CIBlockElement::GetList(
                 $arOrder,
@@ -71,8 +88,18 @@ class tableOut extends CBitrixComponent
                 $arSelect
             );
 
+            // В цикле получаем данные элементов инфоблока и наполняем результирующий массив
+
             while ($currentElementData = $iBlockElementList->Fetch())
             {
+
+                // Если символьный код текущего элемента равен "page-tab", 
+                // то данные добавляются в результриующий массив в формате
+                // ['значение поля CODE элемента инфоблока']['значение поля ID элемента инфоблока'] => [массив со всеми наполняемыми данными текущего элемента инфоблока CATALOG_SECTION_DATA]
+
+                // В противном случае формат добавляемого элемента результриующего массива должен быть следующим:
+                // [автоинкримент] => [массив со всеми наполняемыми данными текущего элемента инфоблока CATALOG_SECTION_DATA]
+
                 if ($currentElementData['CODE'] == 'page-tab')
                 {
                     $fetchResult['page-tab'][$currentElementData['ID']] = $currentElementData;
